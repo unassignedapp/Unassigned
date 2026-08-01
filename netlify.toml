@@ -1,0 +1,19 @@
+# DRAG-AND-DROP READY.
+# Functions are pre-bundled (every dependency inlined), so Netlify needs no
+# build step and no npm install. Manual deploy works.
+[build]
+  publish = "site"
+  functions = "netlify/functions"
+
+[[redirects]]
+  from = "/api/signup"
+  to = "/.netlify/functions/signup"
+  status = 200
+[[redirects]]
+  from = "/api/seal-and-send"
+  to = "/.netlify/functions/seal-and-send"
+  status = 200
+[[redirects]]
+  from = "/api/twilio-webhook"
+  to = "/.netlify/functions/twilio-webhook"
+  status = 200
