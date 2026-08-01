@@ -3,114 +3,230 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Unassigned — SMS Consent & Opt-In</title>
+<title>Unassigned</title>
 <style>
-  :root{--ink:#141019;--cream:#f6f1e7;--muted:#6b6559;--line:#e5ddcf;--seal:#b0202b;}
-  *{box-sizing:border-box;}
-  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
-    margin:0;background:var(--cream);color:var(--ink);line-height:1.6;}
-  .wrap{max-width:720px;margin:0 auto;padding:40px 24px 80px;}
-  header{text-align:center;padding:24px 0 8px;}
-  .seal{width:72px;height:72px;margin:0 auto 16px;border-radius:50%;
-    background:radial-gradient(circle at 34% 28%,#d8323f,var(--seal) 42%,#7c1620);
+  :root{
+    --ink:#141019; --ink2:#1e1826; --cream:#f6f1e7; --muted:#9a8f9e;
+    --seal:#b0202b; --seal2:#d8323f; --line:rgba(255,255,255,.09);
+    --field:#221b2b; --ok:#7ac77a; --err:#e2726f;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;min-height:100%;}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    background:
+      radial-gradient(1200px 600px at 50% -10%, #2a1420 0%, transparent 60%),
+      var(--ink);
+    color:var(--cream);min-height:100vh;display:flex;flex-direction:column;
+    align-items:center;padding:28px 20px 48px;
+  }
+  .brand{text-align:center;margin:16px 0 26px;}
+  .seal{
+    width:76px;height:76px;margin:0 auto 14px;border-radius:50%;
+    background:radial-gradient(circle at 34% 28%,var(--seal2),var(--seal) 42%,#7c1620);
     display:flex;align-items:center;justify-content:center;
-    box-shadow:0 4px 14px rgba(124,22,32,.35),inset 0 -4px 8px rgba(0,0,0,.3);}
-  .seal span{font-family:Georgia,serif;font-size:26px;color:#f6e3cb;font-weight:700;transform:rotate(-9deg);}
-  h1{font-size:28px;margin:8px 0 4px;font-weight:700;}
-  .sub{color:var(--muted);font-size:15px;margin-bottom:8px;}
-  h2{font-size:19px;margin:34px 0 10px;padding-bottom:8px;border-bottom:1px solid var(--line);}
-  p{margin:12px 0;}
-  ol.flow{counter-reset:step;list-style:none;padding:0;margin:16px 0;}
-  ol.flow li{position:relative;padding:14px 16px 14px 56px;margin:10px 0;background:#fff;
-    border:1px solid var(--line);border-radius:12px;}
-  ol.flow li::before{counter-increment:step;content:counter(step);
-    position:absolute;left:16px;top:14px;width:26px;height:26px;border-radius:50%;
-    background:var(--ink);color:var(--cream);display:flex;align-items:center;justify-content:center;
-    font-size:14px;font-weight:700;}
-  .msg{background:#ece6da;border-radius:12px;padding:12px 16px;margin:10px 0;
-    font-size:14px;color:#3a352c;border:1px solid var(--line);}
-  .msg b{color:var(--ink);}
-  table{width:100%;border-collapse:collapse;margin:14px 0;font-size:14px;}
-  th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top;}
-  th{background:#efe8db;font-weight:700;}
-  code{background:#ece6da;padding:2px 7px;border-radius:6px;font-size:13px;}
-  footer{margin-top:48px;padding-top:20px;border-top:1px solid var(--line);
-    color:var(--muted);font-size:13px;text-align:center;}
-  .kw{display:inline-block;background:var(--ink);color:var(--cream);padding:2px 10px;
-    border-radius:20px;font-size:13px;margin:2px 4px 2px 0;}
+    box-shadow:0 6px 20px rgba(124,22,32,.5),inset 0 -4px 8px rgba(0,0,0,.35);
+  }
+  .seal span{font-family:Georgia,serif;font-size:28px;color:#f6e3cb;font-weight:700;transform:rotate(-9deg);}
+  h1{font-size:30px;margin:0 0 4px;font-weight:700;letter-spacing:-.5px;}
+  .tag{color:var(--muted);font-size:14px;}
+
+  .card{
+    width:100%;max-width:440px;background:linear-gradient(180deg,var(--ink2),#191320);
+    border:1px solid var(--line);border-radius:20px;padding:24px 22px;
+    box-shadow:0 20px 50px rgba(0,0,0,.4);
+  }
+  label{display:block;font-size:13px;color:var(--muted);margin:16px 0 7px;font-weight:600;letter-spacing:.2px;}
+  label:first-child{margin-top:0;}
+  input,textarea{
+    width:100%;background:var(--field);border:1px solid var(--line);border-radius:12px;
+    color:var(--cream);font-size:16px;padding:14px 14px;font-family:inherit;resize:none;
+    transition:border-color .15s,box-shadow .15s;
+  }
+  input:focus,textarea:focus{outline:none;border-color:var(--seal2);box-shadow:0 0 0 3px rgba(216,50,63,.15);}
+  input::placeholder,textarea::placeholder{color:#5f5766;}
+  textarea{min-height:64px;}
+
+  .btn{
+    width:100%;margin-top:22px;padding:15px;border:none;border-radius:12px;cursor:pointer;
+    font-size:16px;font-weight:700;color:#fff;letter-spacing:.3px;
+    background:linear-gradient(180deg,var(--seal2),var(--seal));
+    box-shadow:0 8px 20px rgba(176,32,43,.4);transition:transform .08s,opacity .15s;
+  }
+  .btn:active{transform:translateY(1px);}
+  .btn:disabled{opacity:.55;cursor:not-allowed;box-shadow:none;}
+
+  .me{
+    display:flex;align-items:center;gap:9px;justify-content:center;
+    margin-top:18px;font-size:13px;color:var(--muted);
+  }
+  .me b{color:var(--cream);font-family:ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.5px;}
+  .dot{width:7px;height:7px;border-radius:50%;background:var(--ok);box-shadow:0 0 8px var(--ok);}
+
+  .result{
+    margin-top:18px;padding:14px 15px;border-radius:12px;font-size:14px;line-height:1.5;
+    display:none;
+  }
+  .result.show{display:block;}
+  .result.ok{background:rgba(122,199,122,.12);border:1px solid rgba(122,199,122,.3);color:#c6e9c6;}
+  .result.err{background:rgba(226,114,111,.12);border:1px solid rgba(226,114,111,.3);color:#f0c4c3;}
+  .result.info{background:rgba(255,255,255,.06);border:1px solid var(--line);color:var(--cream);}
+
+  .note{text-align:center;color:#5f5766;font-size:12px;margin-top:22px;line-height:1.6;max-width:440px;}
+  .note a{color:var(--muted);}
+  .spin{display:inline-block;width:15px;height:15px;border:2px solid rgba(255,255,255,.35);
+    border-top-color:#fff;border-radius:50%;animation:sp .7s linear infinite;vertical-align:-2px;margin-right:7px;}
+  @keyframes sp{to{transform:rotate(360deg);}}
 </style>
 </head>
 <body>
-<div class="wrap">
-  <header>
+  <div class="brand">
     <div class="seal"><span>UA</span></div>
     <h1>Unassigned</h1>
-    <div class="sub">SMS Consent &amp; Opt-In Policy</div>
-  </header>
-
-  <p>Unassigned is an anonymous link-sharing service. This page explains exactly how
-     recipients consent to receive text messages, in accordance with carrier and TCPA
-     requirements. <b>No marketing or promotional messages are ever sent.</b> All messages
-     are transactional and require the recipient's explicit opt-in before any content is delivered.</p>
-
-  <h2>How recipients opt in</h2>
-  <p>Consent is collected <b>via text (SMS reply)</b>. A recipient is never sent link
-     content until they have explicitly replied to confirm. The exact sequence:</p>
-  <ol class="flow">
-    <li>A registered sender enters a recipient's phone number to share a link.</li>
-    <li>The recipient receives a <b>single one-time consent request</b> — this first
-        message contains <b>no link</b>, only the opt-in request.</li>
-    <li>The recipient replies <b>Y</b> to consent. Only then is the link delivered.</li>
-    <li>If the recipient does not reply, nothing further is sent. If they reply
-        <b>STOP</b>, they are opted out permanently and any held content is deleted.</li>
-  </ol>
-
-  <h2>The opt-in message recipients receive</h2>
-  <div class="msg">
-    <b>Unassigned:</b> You have a link from ASSIGNED123ABC. Reply <b>Y</b> to receive it.
-    Reply <b>STOP</b> to opt out. Or sign up: https://soft-treacle-9a92e4.netlify.app
-    Msg&amp;data rates may apply.
+    <div class="tag">Share a link. Stay anonymous.</div>
   </div>
 
-  <h2>Opt-in &amp; help keywords</h2>
-  <p>Recipients control their consent with standard keywords:</p>
-  <span class="kw">Y</span><span class="kw">YES</span><span class="kw">START</span>
-  <span class="kw">STOP</span><span class="kw">HELP</span>
-  <table>
-    <tr><th>Keyword</th><th>Action</th><th>Response the recipient receives</th></tr>
-    <tr>
-      <td><code>Y</code> / <code>YES</code> / <code>START</code></td>
-      <td>Opt in — the held link is delivered</td>
-      <td>The shared link, shown as "from ASSIGNED123ABC." No further messages unless another link is sent.</td>
-    </tr>
-    <tr>
-      <td><code>STOP</code></td>
-      <td>Opt out permanently</td>
-      <td>"You are opted out of Unassigned. No more messages. Reply Y to opt back in."</td>
-    </tr>
-    <tr>
-      <td><code>HELP</code> / <code>INFO</code></td>
-      <td>Request help</td>
-      <td>"Unassigned: anonymous link sharing. Reply Y to receive a link, STOP to opt out."</td>
-    </tr>
-  </table>
+  <div class="card">
+    <label for="link">Link to send</label>
+    <input id="link" type="url" inputmode="url" placeholder="https://..." autocomplete="off" />
 
-  <h2>Message frequency &amp; rates</h2>
-  <p>Message frequency varies and depends on how often someone shares a link with the
-     recipient. Recipients only ever receive messages tied to a specific link shared with
-     them. Message and data rates may apply. Reply <b>STOP</b> to cancel at any time or
-     <b>HELP</b> for help.</p>
+    <label for="phone">Recipient's phone number</label>
+    <input id="phone" type="tel" inputmode="tel" placeholder="(555) 123-4567" autocomplete="off" />
 
-  <h2>Privacy</h2>
-  <p>Phone numbers are used solely to deliver the consent request and, after opt-in, the
-     shared link. Numbers are never sold, shared with third parties, or used for marketing.
-     A recipient who opts out has their number recorded only to honor that opt-out and any
-     held content is deleted.</p>
+    <label for="note">Add a note (optional)</label>
+    <textarea id="note" placeholder="Something to include with the link..."></textarea>
 
-  <footer>
-    Unassigned &middot; Anonymous link sharing &middot; This page documents SMS opt-in
-    consent for carrier compliance.
-  </footer>
-</div>
+    <button class="btn" id="send">Send anonymously</button>
+
+    <div class="me" id="me" style="visibility:hidden">
+      <span class="dot"></span> You're sending as <b id="uname">—</b>
+    </div>
+
+    <div class="result" id="result"></div>
+  </div>
+
+  <div class="note">
+    The recipient first gets a text asking them to reply <b>Y</b> to receive your link —
+    they never see who you are. <a href="/consent.html">How it works</a>
+  </div>
+
+<script>
+  const API = ""; // same origin as this page
+  const $ = (id) => document.getElementById(id);
+  const linkEl = $("link"), phoneEl = $("phone"), noteEl = $("note"),
+        sendBtn = $("send"), resultEl = $("result"), meEl = $("me"), unameEl = $("uname");
+
+  // Persist this browser's anonymous identity so you keep the SAME handle over time.
+  // On the live site localStorage works and survives closing the tab / coming back days
+  // later. window.name is a fallback in case storage is unavailable (private mode, etc).
+  const STORE_KEY = "unassigned_identity_v1";
+  let identity = null;
+  function loadIdentity(){
+    try {
+      const s = localStorage.getItem(STORE_KEY);
+      if (s) return JSON.parse(s);
+    } catch (e) { /* storage blocked; fall through */ }
+    try { return JSON.parse(window.name || "null"); } catch (e) { return null; }
+  }
+  function saveIdentity(id){
+    try { localStorage.setItem(STORE_KEY, JSON.stringify(id)); } catch (e) { /* ignore */ }
+    try { window.name = JSON.stringify(id); } catch (e) { /* ignore */ }
+  }
+  identity = loadIdentity();
+
+  function show(kind, html){
+    resultEl.className = "result show " + kind;
+    resultEl.innerHTML = html;
+  }
+  function setBusy(b, label){
+    sendBtn.disabled = b;
+    sendBtn.innerHTML = b ? '<span class="spin"></span>' + (label||"Sending...") : "Send anonymously";
+  }
+
+  async function ensureIdentity(){
+    if (identity && identity.api_token && identity.username) return identity;
+    const res = await fetch(API + "/api/signup", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: "{}"
+    });
+    if (!res.ok) throw new Error("Couldn't start a session. Please try again.");
+    identity = await res.json();
+    saveIdentity(identity); // persists across tab closes on the live site
+    return identity;
+  }
+
+  function paintMe(){
+    if (identity && identity.username){
+      unameEl.textContent = identity.username;
+      meEl.style.visibility = "visible";
+    }
+  }
+
+  // show identity on load if we already have one
+  paintMe();
+
+  sendBtn.addEventListener("click", async () => {
+    const link = linkEl.value.trim();
+    const phone = phoneEl.value.trim();
+    const note = noteEl.value.trim();
+
+    resultEl.className = "result"; // hide
+    if (!link){ show("err", "Please enter a link to send."); linkEl.focus(); return; }
+    if (!/^https?:\/\//i.test(link)){ show("err", "Link should start with http:// or https://"); linkEl.focus(); return; }
+    const digits = phone.replace(/\D/g,"");
+    if (digits.length < 10){ show("err", "Please enter a valid phone number."); phoneEl.focus(); return; }
+
+    try {
+      setBusy(true, "Setting up...");
+      const id = await ensureIdentity();
+      paintMe();
+
+      setBusy(true, "Sending...");
+      const res = await fetch(API + "/api/seal-and-send", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer " + id.api_token
+        },
+        body: JSON.stringify({ recipient_phone: phone, link: link, note: note || undefined })
+      });
+      const data = await res.json().catch(()=> ({}));
+
+      if (res.ok && data.awaiting_consent){
+        show("ok", "Sent. <b>" + phone + "</b> got a text asking them to reply <b>Y</b> to receive your link. They'll never see your identity — only <b>" + id.username + "</b>.");
+        linkEl.value = ""; noteEl.value = "";
+      } else if (res.ok && data.delivered){
+        show("ok", "Delivered. <b>" + phone + "</b> had already opted in, so your link was sent right away as <b>" + id.username + "</b>.");
+        linkEl.value = ""; noteEl.value = "";
+      } else if (res.ok && data.delivered === false && !data.awaiting_consent){
+        show("info", "That number has opted out of receiving links, so nothing was sent.");
+      } else if (res.status === 402){
+        show("err", "You've hit today's send limit on the free tier (1 per day). Try again tomorrow.");
+      } else if (res.status === 400 && data.error === "invalid_recipient_phone"){
+        show("err", "That phone number doesn't look valid. Include the area code.");
+      } else if (res.status === 502){
+        show("err", "The message couldn't be sent right now. " + (data.detail ? "("+data.detail+")" : "Please try again shortly."));
+      } else {
+        show("err", "Something went wrong" + (data.error ? ": " + data.error : "") + ". Please try again.");
+      }
+    } catch (err) {
+      // network/connection failures (offline, DNS, CORS) land here
+      const msg = (err && err.message) ? err.message : "";
+      if (/failed to fetch|networkerror|load failed/i.test(msg)) {
+        show("err", "Couldn't reach the server. Check your connection and try again.");
+      } else {
+        show("err", msg || "Something went wrong. Please try again.");
+      }
+    } finally {
+      setBusy(false);
+    }
+  });
+
+  // Enter key on link/phone triggers send
+  [linkEl, phoneEl].forEach(el => el.addEventListener("keydown", e => {
+    if (e.key === "Enter"){ e.preventDefault(); sendBtn.click(); }
+  }));
+</script>
 </body>
 </html>
