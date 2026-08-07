@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Unassigned - Anonymous Link Sharing</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg1:#e4f3e2; --bg2:#f6fcf5; --ink:#0f2117; --body:#3b5247;
+    --line:#d3e6d4; --green:#17553a; --green2:#278159; --bright:#41c684;
+    --gold:#b5892c; --shadow:rgba(23,85,58,.10);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;min-height:100%;}
+  body{
+    font-family:"Manrope",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    background:linear-gradient(168deg,var(--bg1) 0%,var(--bg2) 48%,#ffffff 100%);
+    background-attachment:fixed;
+    color:var(--body);min-height:100vh;
+    display:flex;flex-direction:column;align-items:center;
+    padding:38px 20px 64px;-webkit-font-smoothing:antialiased;
+  }
+  .brand{text-align:center;margin:4px 0 30px;}
+  .seal{
+    width:88px;height:88px;margin:0 auto 20px;border-radius:50%;
+    background:radial-gradient(circle at 34% 26%,#37b07b,var(--green) 56%,#0b3a25);
+    display:flex;align-items:center;justify-content:center;
+    box-shadow:0 12px 30px rgba(23,85,58,.32),inset 0 -3px 9px rgba(0,0,0,.25);
+  }
+  .seal span{
+    font-family:"Fraunces",Georgia,serif;font-size:33px;color:#f5ecd8;
+    font-weight:700;transform:rotate(-8deg);letter-spacing:1px;
+  }
+  h1{
+    font-family:"Fraunces",Georgia,serif;font-size:44px;line-height:1.05;
+    margin:0 0 10px;font-weight:700;color:var(--ink);letter-spacing:-.8px;
+  }
+  .tag{color:var(--green2);font-size:15.5px;font-weight:600;letter-spacing:.1px;}
+
+  .card{
+    width:100%;max-width:480px;background:#fff;border:1px solid var(--line);
+    border-radius:24px;padding:32px 30px;
+    box-shadow:0 20px 50px var(--shadow),0 2px 6px rgba(23,85,58,.05);
+  }
+  label{
+    display:block;font-size:11.5px;color:var(--green);margin:22px 0 9px;
+    font-weight:800;letter-spacing:1px;text-transform:uppercase;
+  }
+  label:first-child{margin-top:0;}
+  input,textarea{
+    width:100%;background:#f5faf4;border:1.5px solid var(--line);border-radius:14px;
+    color:var(--ink);font-size:16px;padding:16px;font-family:inherit;font-weight:500;
+    resize:none;transition:border-color .15s,background .15s;
+  }
+  input:focus,textarea:focus{outline:none;border-color:var(--bright);background:#fff;}
+  input::placeholder,textarea::placeholder{color:#9cb4a4;font-weight:400;}
+  textarea{min-height:72px;}
+  .btn{
+    width:100%;margin-top:28px;padding:18px;border:none;border-radius:14px;cursor:pointer;
+    font-family:inherit;font-size:16.5px;font-weight:800;letter-spacing:.2px;color:#fff;
+    background:linear-gradient(180deg,var(--green2),var(--green));
+    box-shadow:0 10px 24px rgba(23,85,58,.28);transition:transform .08s,box-shadow .15s;
+  }
+  .btn:hover{box-shadow:0 12px 30px rgba(23,85,58,.36);}
+  .btn:active{transform:translateY(1px);}
+  .btn:disabled{opacity:.5;cursor:not-allowed;box-shadow:none;}
+  .me{text-align:center;margin-top:22px;font-size:13px;color:#7b9387;font-weight:500;}
+  .me b{color:var(--green);font-weight:800;letter-spacing:.7px;}
+  .me-sub{display:inline-block;margin-top:5px;font-size:12px;color:#93a99b;font-weight:500;}
+  .result{
+    margin-top:22px;padding:16px 17px;border-radius:14px;font-size:14.5px;
+    line-height:1.55;display:none;font-weight:500;
+  }
+  .result.show{display:block;}
+  .result.ok{background:#e7f8ee;border:1px solid #a4dbbd;color:#11603b;}
+  .result.err{background:#fdecea;border:1px solid #f0bcb8;color:#8d2a24;}
+  .result.info{background:#f1f6fa;border:1px solid #ccdae6;color:#31536c;}
+
+  .info{width:100%;max-width:660px;margin-top:52px;}
+  .info h2{
+    font-family:"Fraunces",Georgia,serif;font-size:27px;color:var(--ink);
+    margin:38px 0 12px;font-weight:600;letter-spacing:-.3px;
+  }
+  .info h2:first-child{margin-top:0;}
+  .info p{font-size:16px;line-height:1.78;margin:0 0 16px;}
+  .rule{
+    height:3px;width:58px;border-radius:3px;margin:0 0 24px;
+    background:linear-gradient(90deg,var(--bright),var(--gold));
+  }
+  .steps{counter-reset:s;list-style:none;padding:0;margin:0 0 22px;}
+  .steps li{
+    counter-increment:s;position:relative;padding:17px 22px 17px 64px;margin-bottom:12px;
+    background:#fff;border:1px solid var(--line);border-radius:16px;
+    font-size:15.5px;line-height:1.6;box-shadow:0 4px 12px rgba(23,85,58,.05);
+  }
+  .steps li:before{
+    content:counter(s);position:absolute;left:19px;top:16px;width:30px;height:30px;
+    border-radius:50%;background:linear-gradient(180deg,var(--green2),var(--green));
+    color:#fff;display:flex;align-items:center;justify-content:center;
+    font-size:14.5px;font-weight:800;
+  }
+  .quote{
+    background:#f1f8f0;border-left:4px solid var(--bright);border-radius:0 14px 14px 0;
+    padding:17px 22px;margin:0 0 20px;font-size:15.5px;line-height:1.65;
+    color:var(--ink);font-style:italic;
+  }
+  .kw{
+    display:inline-block;background:var(--green);color:#eaf5ee;padding:6px 15px;
+    border-radius:30px;font-size:13px;font-weight:800;letter-spacing:.7px;margin:0 7px 9px 0;
+  }
+  .policy-link{
+    display:inline-block;margin-top:6px;font-weight:800;color:var(--green);
+    border-bottom:2px solid var(--bright);text-decoration:none;padding-bottom:2px;font-size:15.5px;
+  }
+  .foot{text-align:center;color:#84998b;font-size:13px;margin-top:48px;line-height:1.7;max-width:560px;}
+  .foot a{color:var(--green);font-weight:700;}
+  @media(max-width:520px){
+    h1{font-size:35px;}
+    .card{padding:27px 22px;}
+    .info h2{font-size:23px;}
+    .info p{font-size:15.5px;}
+  }
+</style>
+</head>
+<body>
+  <div class="brand">
+    <div class="seal"><span>UA</span></div>
+    <h1>Unassigned</h1>
+    <div class="tag">Share a link. Stay anonymous.</div>
+  </div>
+
+  <div class="card">
+    <label for="link">Link to send</label>
+    <input id="link" type="url" inputmode="url" placeholder="https://..." autocomplete="off" />
+
+    <label for="phone">Recipient phone number</label>
+    <input id="phone" type="tel" inputmode="tel" placeholder="(555) 123-4567" autocomplete="off" />
+
+    <label for="note">Add a note (optional)</label>
+    <textarea id="note" placeholder="Something to include with the link..."></textarea>
+
+    <button class="btn" id="send">Send anonymously</button>
+
+    <div class="me" id="me" style="visibility:hidden">You are sending as <b id="uname">-</b><br><span class="me-sub">Assigned automatically. No account or sign-in needed.</span></div>
+    <div class="result" id="result"></div>
+  </div>
+
+  <div class="info">
+    <h2>What Unassigned is</h2>
+    <div class="rule"></div>
+    <p>Unassigned is a link-sharing service operated in the United States. It lets you send a web link to someone by text message without revealing your identity. You are identified only by an anonymous handle such as ASSIGNED123ABC. No account is required.</p>
+
+    <h2>How consent works</h2>
+    <div class="rule"></div>
+    <ol class="steps">
+      <li>A sender enters a recipient phone number and a link on this page.</li>
+      <li>The recipient receives one single message asking permission. This first message contains no link, only the opt-in request.</li>
+      <li>The recipient replies Y to consent. Only then is the link delivered.</li>
+      <li>If the recipient does not reply, nothing further is sent. If they reply STOP they are opted out permanently and any held link is deleted.</li>
+    </ol>
+    <p>This is the one message a recipient receives before consenting:</p>
+    <div class="quote">Hi, this is Unassigned. You have a link from ASSIGNED123ABC. Reply Y to receive it. Reply STOP to opt out. Msg and data rates may apply.</div>
+
+    <h2>Keywords</h2>
+    <div class="rule"></div>
+    <p><span class="kw">Y</span><span class="kw">YES</span><span class="kw">START</span><span class="kw">STOP</span><span class="kw">HELP</span></p>
+    <p>Reply Y, YES or START to opt in. Reply STOP to opt out at any time. Reply HELP for help. Message frequency varies. Message and data rates may apply.</p>
+    <p><a class="policy-link" href="https://soft-treacle-9a92e4.netlify.app/consent.html">Read the full SMS Consent and Opt-In Policy</a></p>
+  </div>
+
+  <div class="foot">The recipient always gets a permission request first and never sees who you are. <a href="https://soft-treacle-9a92e4.netlify.app/consent.html">Consent policy</a></div>
+
+<script>
+  var $ = function(id){ return document.getElementById(id); };
+  var linkEl=$("link"), phoneEl=$("phone"), noteEl=$("note"),
+      sendBtn=$("send"), resultEl=$("result"), meEl=$("me"), unameEl=$("uname");
+
+  var STORE_KEY = "unassigned_identity_v1";
+  var identity = null;
+
+  function loadIdentity(){
+    try { var s = localStorage.getItem(STORE_KEY); if(s) return JSON.parse(s); } catch(e){}
+    try { return JSON.parse(window.name || "null"); } catch(e){ return null; }
+  }
+  function saveIdentity(id){
+    try { localStorage.setItem(STORE_KEY, JSON.stringify(id)); } catch(e){}
+    try { window.name = JSON.stringify(id); } catch(e){}
+  }
+  identity = loadIdentity();
+
+  function show(kind, html){ resultEl.className = "result show " + kind; resultEl.innerHTML = html; }
+  function setBusy(b, label){
+    sendBtn.disabled = b;
+    sendBtn.textContent = b ? (label || "Sending...") : "Send anonymously";
+  }
+  function paintMe(){
+    if(identity && identity.username){
+      unameEl.textContent = identity.username;
+      meEl.style.visibility = "visible";
+    }
+  }
+  paintMe();
+
+  async function ensureIdentity(){
+    if(identity && identity.api_token && identity.username) return identity;
+    var res = await fetch("/api/signup", {
+      method:"POST", headers:{"Content-Type":"application/json"}, body:"{}"
+    });
+    if(!res.ok){
+      var d = "";
+      try { var j = await res.json(); d = j.detail || j.error || ""; } catch(e){}
+      throw new Error("Could not start a session (" + res.status + ")" + (d ? ": " + d : ""));
+    }
+    identity = await res.json();
+    saveIdentity(identity);
+    return identity;
+  }
+
+  sendBtn.addEventListener("click", async function(){
+    var link = linkEl.value.trim();
+    var phone = phoneEl.value.trim();
+    var note = noteEl.value.trim();
+    resultEl.className = "result";
+
+    if(!link){ show("err","Please enter a link to send."); linkEl.focus(); return; }
+    var lower = link.toLowerCase();
+    if(lower.indexOf("http://") !== 0 && lower.indexOf("https://") !== 0){
+      show("err","Link should start with http:// or https://"); linkEl.focus(); return;
+    }
+    var digits = phone.replace(/[^0-9]/g, "");
+    if(digits.length < 10){ show("err","Please enter a valid phone number."); phoneEl.focus(); return; }
+
+    try {
+      setBusy(true, "Setting up...");
+      var id = await ensureIdentity();
+      paintMe();
+
+      setBusy(true, "Sending...");
+      var body = { recipient_phone: phone, link: link };
+      if(note) body.note = note;
+
+      var res = await fetch("/api/seal-and-send", {
+        method:"POST",
+        headers:{ "Content-Type":"application/json", "Authorization":"Bearer " + id.api_token },
+        body: JSON.stringify(body)
+      });
+      var data = {};
+      try { data = await res.json(); } catch(e){}
+
+      if(res.ok && data.awaiting_consent){
+        show("ok","Sent. " + phone + " got a text asking them to reply Y to receive your link. They never see your identity, only " + id.username + ".");
+        linkEl.value = ""; noteEl.value = "";
+      } else if(res.ok && data.delivered){
+        show("ok","Delivered. " + phone + " had already opted in, so your link was sent right away as " + id.username + ".");
+        linkEl.value = ""; noteEl.value = "";
+      } else if(res.ok && data.delivered === false){
+        show("info","That number has opted out of receiving links, so nothing was sent.");
+      } else if(res.status === 402){
+        show("err","You have reached today's free send limit (1 per day). Try again tomorrow.");
+      } else if(res.status === 400 && data.error === "invalid_recipient_phone"){
+        show("err","That phone number does not look valid. Include the area code.");
+      } else if(res.status === 502){
+        show("err","The message could not be sent right now. " + (data.detail ? "(" + data.detail + ")" : "Please try again shortly."));
+      } else {
+        show("err","Something went wrong" + (data.error ? ": " + data.error : "") + ". Please try again.");
+      }
+    } catch(err){
+      var msg = (err && err.message) ? err.message : "";
+      if(msg.toLowerCase().indexOf("fetch") > -1 || msg.toLowerCase().indexOf("network") > -1){
+        show("err","Could not reach the server. Check your connection and try again.");
+      } else {
+        show("err", msg || "Something went wrong. Please try again.");
+      }
+    } finally {
+      setBusy(false);
+    }
+  });
+
+  [linkEl, phoneEl].forEach(function(el){
+    el.addEventListener("keydown", function(e){
+      if(e.key === "Enter"){ e.preventDefault(); sendBtn.click(); }
+    });
+  });
+</script>
+</body>
+</html>
