@@ -22130,7 +22130,7 @@ function consentCopy(fromUsername) {
 }
 function dropCopy(fromUsername, link, note) {
   const n = note ? `"${String(note).slice(0, 180)}" ` : "";
-  return `Unassigned: Your consent has been confirmed. Here is the link: ${link}`;
+  return `Unassigned: Your consent has been confirmed. Here is the link: ${link} Reply HELP for help, STOP to opt out.`;
 }
 var toE164 = (raw) => {
   let d = String(raw || "").replace(/\D/g, "");

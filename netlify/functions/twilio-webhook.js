@@ -22130,7 +22130,7 @@ var OPT_OUT = /* @__PURE__ */ new Set(["STOP", "STOPALL", "UNSUBSCRIBE", "CANCEL
 var HELP = /* @__PURE__ */ new Set(["HELP", "INFO"]);
 function dropCopy(fromUsername, link, note) {
   const n = note ? `"${String(note).slice(0, 180)}" ` : "";
-  return `Unassigned: Your consent has been confirmed. Here is the link: ${link}`;
+  return `Unassigned: Your consent has been confirmed. Here is the link: ${link} Reply HELP for help, STOP to opt out.`;
 }
 function twiml(message) {
   const inner = message ? `<Message>${String(message).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")}</Message>` : "";
