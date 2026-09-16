@@ -217,18 +217,10 @@
   var linkEl=$("link"), phoneEl=$("phone"), noteEl=$("note"),
       sendBtn=$("send"), resultEl=$("result"), meEl=$("me"), unameEl=$("uname");
 
-  var STORE_KEY = "unassigned_identity_v1";
+  // Each visit gets a brand-new identity — nothing is persisted across
+  // page loads (no localStorage/window.name reuse). Reload = new handle.
   var identity = null;
-
-  function loadIdentity(){
-    try { var s = localStorage.getItem(STORE_KEY); if(s) return JSON.parse(s); } catch(e){}
-    try { return JSON.parse(window.name || "null"); } catch(e){ return null; }
-  }
-  function saveIdentity(id){
-    try { localStorage.setItem(STORE_KEY, JSON.stringify(id)); } catch(e){}
-    try { window.name = JSON.stringify(id); } catch(e){}
-  }
-  identity = loadIdentity();
+  var identityPromise = null;
 
   function show(kind, html){ resultEl.className = "result show " + kind; resultEl.innerHTML = html; }
   function setBusy(b, label){
@@ -241,10 +233,8 @@
       meEl.style.visibility = "visible";
     }
   }
-  paintMe();
 
-  async function ensureIdentity(){
-    if(identity && identity.api_token && identity.username) return identity;
+  async function signupFresh(){
     var res = await fetch("/api/signup", {
       method:"POST", headers:{"Content-Type":"application/json"}, body:"{}"
     });
@@ -253,10 +243,21 @@
       try { var j = await res.json(); d = j.detail || j.error || ""; } catch(e){}
       throw new Error("Could not start a session (" + res.status + ")" + (d ? ": " + d : ""));
     }
-    identity = await res.json();
-    saveIdentity(identity);
-    return identity;
+    return res.json();
   }
+
+  async function ensureIdentity(){
+    // Always resolves to a single fresh identity per page load. Multiple
+    // calls during the same visit (e.g. paint + send) share one signup.
+    if(!identityPromise){
+      identityPromise = signupFresh().then(function(id){ identity = id; return id; });
+    }
+    return identityPromise;
+  }
+
+  // Mint the fresh identity as soon as the page loads so it's visible
+  // before the sender clicks send.
+  ensureIdentity().then(paintMe).catch(function(){ /* silent; send click will retry/report */ });
 
   sendBtn.addEventListener("click", async function(){
     var link = linkEl.value.trim();
