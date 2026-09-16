@@ -22197,13 +22197,23 @@ exports.handler = async (event) => {
   if (OPT_IN.has(word)) {
     try {
       await supabase.from("consent_registry").upsert({ phone_number: from, status: "opted_in" }, { onConflict: "phone_number" });
-      const { data: held, error } = await supabase.from("held_links").select("id, from_username, link_url, note").eq("phone_number", from).order("created_at", { ascending: true });
+      const { data: held, error } = await supabase.from("held_links").select("id, from_username, link_url, note, created_at").eq("phone_number", from).order("created_at", { ascending: true });
       if (error) {
         console.error("held_fetch_failed", error.message);
         return twiml("");
       }
-      const deliveredIds = [];
+      const HOLD_TTL_MS = 24 * 60 * 60 * 1000;
+      const cutoff = Date.now() - HOLD_TTL_MS;
+      const fresh = [];
+      const staleIds = [];
       for (const row of held || []) {
+        const ts = Date.parse(row.created_at);
+        if (!isNaN(ts) && ts < cutoff) staleIds.push(row.id);
+        else fresh.push(row);
+      }
+      if (staleIds.length) await supabase.from("held_links").delete().in("id", staleIds);
+      const deliveredIds = [];
+      for (const row of fresh) {
         try {
           await sendSms(from, dropCopy(row.from_username, row.link_url, row.note));
           deliveredIds.push(row.id);
